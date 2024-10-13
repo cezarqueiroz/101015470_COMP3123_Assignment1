@@ -3,7 +3,7 @@ const EmployeeModel = require("../models/Employee");
 const routes = express.Router();
 
 // Get All Employees
-routes.get("/emp/employees", (req, res) => {
+routes.get("/employee", (req, res) => {
     EmployeeModel.find()
         .then((employees) => {
             res.status(200).send(employees);
@@ -14,7 +14,7 @@ routes.get("/emp/employees", (req, res) => {
 });
 
 // Add New Employee
-routes.post("/emp/employees", async (req, res) => {
+routes.post("/employee", async (req, res) => {
     const employeeData = req.body;
     try {
         const employee = new EmployeeModel(employeeData);
@@ -29,8 +29,8 @@ routes.post("/emp/employees", async (req, res) => {
 });
 
 // Get Employee By ID
-routes.get("/emp/employees/:eid", (req, res) => {
-    EmployeeModel.findById(req.params.eid)
+routes.get("/employee/:id", (req, res) => {
+    EmployeeModel.findById(req.params.id)
         .then((employee) => {
             if (employee) {
                 res.status(200).send(employee);
@@ -44,8 +44,8 @@ routes.get("/emp/employees/:eid", (req, res) => {
 });
 
 // Update Employee By ID
-routes.post("/emp/employees/:eid", (req, res) => {
-    EmployeeModel.findByIdAndUpdate(req.params.eid, req.body, { new: true })
+routes.post("/employee/:id", (req, res) => {
+    EmployeeModel.findByIdAndUpdate(req.params.id, req.body, { new: true })
         .then((employee) => {
             if (employee) {
                 res.status(200).send({
@@ -62,7 +62,7 @@ routes.post("/emp/employees/:eid", (req, res) => {
 });
 
 // Delete Employee By ID
-routes.delete("/emp/employees", (req, res) => {
+routes.delete("/employee/:id", (req, res) => {
     const { eid } = req.query;
     EmployeeModel.findByIdAndDelete(eid)
         .then((employee) => {
