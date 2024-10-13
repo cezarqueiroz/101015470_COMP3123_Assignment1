@@ -1,0 +1,82 @@
+const express = require("express");
+const EmployeeModel = require("../models/Employee");
+const routes = express.Router();
+
+// Get All Employees
+routes.get("/emp/employees", (req, res) => {
+    EmployeeModel.find()
+        .then((employees) => {
+            res.status(200).send(employees);
+        })
+        .catch((err) => {
+            res.status(500).send({ message: err.message });
+        });
+});
+
+// Add New Employee
+routes.post("/emp/employees", async (req, res) => {
+    const employeeData = req.body;
+    try {
+        const employee = new EmployeeModel(employeeData);
+        const newEmployee = await employee.save();
+        res.status(201).send({
+            message: "Employee created successfully.",
+            employee_id: newEmployee._id,
+        });
+    } catch (error) {
+        res.status(500).send({ message: error.message });
+    }
+});
+
+// Get Employee By ID
+routes.get("/emp/employees/:eid", (req, res) => {
+    EmployeeModel.findById(req.params.eid)
+        .then((employee) => {
+            if (employee) {
+                res.status(200).send(employee);
+            } else {
+                res.status(404).send({ message: "Employee not found" });
+            }
+        })
+        .catch((err) => {
+            res.status(500).send({ message: err.message });
+        });
+});
+
+// Update Employee By ID
+routes.post("/emp/employees/:eid", (req, res) => {
+    EmployeeModel.findByIdAndUpdate(req.params.eid, req.body, { new: true })
+        .then((employee) => {
+            if (employee) {
+                res.status(200).send({
+                    message: "Employee details updated successfully.",
+                    employee,
+                });
+            } else {
+                res.status(404).send({ message: "Employee not found" });
+            }
+        })
+        .catch((err) => {
+            res.status(500).send({ message: err.message });
+        });
+});
+
+// Delete Employee By ID
+routes.delete("/emp/employees", (req, res) => {
+    const { eid } = req.query;
+    EmployeeModel.findByIdAndDelete(eid)
+        .then((employee) => {
+            if (employee) {
+                res.status(204).send({
+                    message: "Employee deleted successfully.",
+                });
+            } else {
+                res.status(404).send({ message: "Employee not found" });
+            }
+        })
+        .catch((err) => {
+            res.status(500).send({ message: err.message });
+        });
+});
+
+module.exports = routes;
